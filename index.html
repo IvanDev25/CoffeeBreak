@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoffeeBreak: Boracay Cafe Guide</title>
+  <link rel="icon" type="image/png" href="assets/CB-logo.png">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  >
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="loading-screen" id="loadingScreen">
+    <div class="coffee-wrap">
+      <div class="coffee">
+        <div class="cup">
+          <span class="steam"></span>
+          <span class="steam"></span>
+          <span class="steam"></span>
+          <div class="cup-handle"></div>
+        </div>
+        <p id="loadingCopy">Coffee Break<br> Please Wait . . .</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <header class="hero reveal-block">
+      <div class="language-switcher" id="languageSwitcher">
+        <button class="language-switcher__trigger" id="languageTrigger" type="button" aria-expanded="false" aria-controls="languageMenu" aria-label="Change language">
+          <span class="language-switcher__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 3C16.971 3 21 7.029 21 12C21 16.971 16.971 21 12 21C7.029 21 3 16.971 3 12C3 7.029 7.029 3 12 3Z"></path>
+              <path d="M3.6 9H20.4"></path>
+              <path d="M3.6 15H20.4"></path>
+              <path d="M12 3C14.18 5.4 15.42 8.61 15.5 12C15.42 15.39 14.18 18.6 12 21"></path>
+              <path d="M12 3C9.82 5.4 8.58 8.61 8.5 12C8.58 15.39 9.82 18.6 12 21"></path>
+            </svg>
+          </span>
+          <span class="language-switcher__label" id="languageLabel">EN</span>
+        </button>
+        <div class="language-switcher__menu is-hidden" id="languageMenu">
+          <button class="language-switcher__option is-active" type="button" data-lang="en">English</button>
+          <button class="language-switcher__option" type="button" data-lang="fil">Filipino</button>
+          <button class="language-switcher__option" type="button" data-lang="ko">Korean</button>
+          <button class="language-switcher__option" type="button" data-lang="zh">Chinese</button>
+          <button class="language-switcher__option" type="button" data-lang="ja">Japanese</button>
+        </div>
+      </div>
+      <div class="hero__copy">
+        <p class="eyebrow" id="heroEyebrow">CoffeeBreak</p>
+        <h1 id="heroTitle">Boracay Cafe Guide</h1>
+      </div>
+      <div class="hero__logo-wrap">
+        <img class="hero__logo" src="assets/CB-logo.png" alt="CoffeeBreak logo">
+      </div>
+      <div class="hero__text-card">
+        <p class="hero__text" id="heroText">
+          Find nearby coffee shops in Boracay, see which cafes are open now, and navigate with turn-by-turn directions.
+        </p>
+      </div>
+      <div class="hero__actions">
+        <button class="location-btn" id="locateButton" type="button">Use my location</button>
+        <div class="hero__note-wrap" id="heroNoteWrap">
+        <button class="hero__note" id="heroNoteButton" type="button" aria-expanded="false" aria-controls="heroNotePopover" aria-label="About CoffeeBreak">
+          <span class="hero__note-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 20C12 20 4 15.36 4 9.92C4 7.31 6.08 5.2 8.64 5.2C10.18 5.2 11.55 5.95 12.4 7.1C13.25 5.95 14.62 5.2 16.16 5.2C18.72 5.2 20.8 7.31 20.8 9.92C20.8 15.36 12.8 20 12.8 20H12Z"></path>
+              <path d="M8.5 12.5H15.5"></path>
+              <path d="M10 10H14"></path>
+            </svg>
+          </span>
+        </button>
+        <div class="hero-note-popover is-hidden" id="heroNotePopover">
+          <span class="hero-note-popover__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 20C12 20 4 15.36 4 9.92C4 7.31 6.08 5.2 8.64 5.2C10.18 5.2 11.55 5.95 12.4 7.1C13.25 5.95 14.62 5.2 16.16 5.2C18.72 5.2 20.8 7.31 20.8 9.92C20.8 15.36 12.8 20 12.8 20H12Z"></path>
+              <path d="M8.5 12.5H15.5"></path>
+              <path d="M10 10H14"></path>
+            </svg>
+          </span>
+          <p id="heroNoteText">Inspired by my girlfriend, Jewel Gomez, who loves coffee, this app helps locals and tourists discover coffee shops around Boracay Island find cafes and navigate easily.</p>
+        </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel panel--map reveal-block" id="mapSection">
+        <div class="section-head">
+          <div>
+            <p class="section-head__eyebrow" id="mapEyebrow">Explore</p>
+            <h2 id="mapHeading">Map of Boracay cafes</h2>
+          </div>
+          <p class="status" id="statusText">Showing all sample cafes in Boracay.</p>
+        </div>
+        <div class="map-filters">
+          <div class="map-filter-dropdown" id="shopFilterDropdown">
+            <button class="map-filter-dropdown__trigger" id="shopFilterTrigger" type="button" aria-expanded="false" aria-controls="shopFilterMenu">
+              <span id="shopFilterLabel">All coffee shops</span>
+            </button>
+            <div class="map-filter-dropdown__menu is-hidden" id="shopFilterMenu">
+              <label class="map-filter-option map-filter-option--all">
+                <input id="shopFilterAll" type="checkbox" checked>
+                <span>All coffee shops</span>
+              </label>
+              <div class="map-filter-dropdown__list" id="shopFilterList"></div>
+            </div>
+          </div>
+          <div class="map-filter-dropdown map-filter-dropdown--single" id="distanceDropdown">
+            <button class="map-filter-dropdown__trigger" id="distanceTrigger" type="button" aria-expanded="false" aria-controls="distanceMenu">
+              <span id="distanceLabel">Nearby</span>
+            </button>
+            <div class="map-filter-dropdown__menu is-hidden" id="distanceMenu">
+              <button class="map-filter-single-option is-active" type="button" data-distance-value="all">Nearby</button>
+              <button class="map-filter-single-option" type="button" data-distance-value="1">1 km</button>
+              <button class="map-filter-single-option" type="button" data-distance-value="3">3 km</button>
+              <button class="map-filter-single-option" type="button" data-distance-value="5">5 km</button>
+            </div>
+          </div>
+        </div>
+        <div class="map-shell">
+          <div id="map" aria-label="Map of Boracay coffee shops"></div>
+          <div class="map-loading is-hidden" id="mapLoading" aria-live="polite" aria-hidden="true">
+            <div class="map-loading__card">
+              <span class="map-loading__spinner" aria-hidden="true"></span>
+              <p class="map-loading__title" id="mapLoadingTitle">Calculating route...</p>
+              <p class="map-loading__text" id="mapLoadingText">Please wait while we prepare directions.</p>
+            </div>
+          </div>
+          <div class="nav-banner is-hidden" id="navBanner">
+            <div>
+              <p class="nav-banner__title" id="navBannerTitle">Calculating route...</p>
+              <p class="nav-banner__subtitle" id="navBannerSubtitle">Heading to your selected cafe.</p>
+            </div>
+            <button class="nav-banner__close" id="stopNavigation" type="button" aria-label="Stop navigation">Close</button>
+          </div>
+          <div class="nav-bottom is-hidden" id="navBottom">
+            <div class="nav-bottom__stats">
+              <strong class="nav-bottom__eta" id="navEta">10 min</strong>
+              <span class="nav-bottom__meta" id="navDistance">4.4 km</span>
+              <span class="nav-bottom__meta" id="navClock">11:36 AM</span>
+            </div>
+            <button class="nav-bottom__recenter" id="recenterNavigation" type="button" aria-label="Recenter map">Locate</button>
+          </div>
+          <div class="route-card is-hidden" id="routeCard">
+            <div class="route-card__main">
+              <p class="route-card__eyebrow" id="routeCardEyebrow">Selected cafe</p>
+              <h3 id="routeCafeName">Choose a shop on the map</h3>
+              <p class="route-card__meta" id="routeMeta">Tap any cafe marker to preview the route.</p>
+            </div>
+            <div class="route-card__actions">
+              <button class="route-card__navigate" id="routeNavigate" type="button">Navigate</button>
+              <button class="route-card__close" id="closeRoute" type="button" aria-label="Close route">Close</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel--list">
+        <div class="section-head">
+          <div>
+            <p class="section-head__eyebrow" id="shopEyebrow">Shops</p>
+            <h2 id="shopHeading">Cafe list</h2>
+          </div>
+        </div>
+        <div class="shop-list" id="shopList"></div>
+        <div class="shop-list__more is-hidden" id="shopListMoreWrap">
+          <button class="ghost-btn shop-list__more-btn" id="shopListMoreButton" type="button">View more</button>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <p id="footerText">CoffeeBreak Boracay</p>
+    </footer>
+  </div>
+
+  <div class="menu-modal is-hidden" id="menuModal">
+    <div class="menu-modal__backdrop" id="menuBackdrop"></div>
+    <div class="menu-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+      <div class="menu-modal__head">
+        <h3 id="menuTitle">Cafe Menu</h3>
+        <button class="menu-modal__close" id="menuClose" type="button" aria-label="Close menu">X</button>
+      </div>
+      <div class="menu-modal__body">
+        <button class="menu-carousel__nav menu-carousel__nav--prev" id="menuPrev" type="button" aria-label="Previous menu image">&lsaquo;</button>
+        <div class="menu-carousel" id="menuGallery"></div>
+        <button class="menu-carousel__nav menu-carousel__nav--next" id="menuNext" type="button" aria-label="Next menu image">&rsaquo;</button>
+      </div>
+      <div class="menu-carousel__dots" id="menuDots"></div>
+    </div>
+  </div>
+
+  <div class="menu-modal is-hidden" id="tiktokModal">
+    <div class="menu-modal__backdrop" id="tiktokBackdrop"></div>
+    <div class="menu-modal__dialog menu-modal__dialog--tiktok" role="dialog" aria-modal="true" aria-labelledby="tiktokTitle">
+      <div class="menu-modal__head">
+        <h3 id="tiktokTitle">Cafe TikTok videos</h3>
+        <button class="menu-modal__close" id="tiktokClose" type="button" aria-label="Close TikTok modal">X</button>
+      </div>
+      <div class="menu-modal__body menu-modal__body--tiktok">
+        <button class="menu-carousel__nav menu-carousel__nav--prev" id="tiktokPrev" type="button" aria-label="Previous TikTok video">&lsaquo;</button>
+        <div class="tiktok-viewer" id="tiktokViewer"></div>
+        <button class="menu-carousel__nav menu-carousel__nav--next" id="tiktokNext" type="button" aria-label="Next TikTok video">&rsaquo;</button>
+      </div>
+      <div class="menu-carousel__dots" id="tiktokDots"></div>
+      <a class="tiktok-open-link" id="tiktokOpenLink" href="#" target="_blank" rel="noreferrer">Open on TikTok</a>
+    </div>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script async src="https://www.tiktok.com/embed.js"></script>
+  <script src="javascipt.js"></script>
+</body>
+</html>
